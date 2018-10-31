@@ -74,21 +74,22 @@ function promptCustomer() {
 
 function buyItem(id, quantity) {
     // Query the item from the database and see if it exists.
-    connection.query("SELECT item_id, stock_quantity FROM products WHERE item_id = ?",
+    connection.query("SELECT item_id, price, stock_quantity FROM products WHERE item_id = ?",
                      [id],
                      (err, res) => {
                          if (err) throw err;
                          
                          // If result is empty, item does not exist.
+                         quantity = parseInt(quantity);
                          if (res.length === 0) {
                              return console.log("Item does not exist!");
-                         } else if (res[0].stock_quantity < parseInt(quantity) ) {
+                         } else if (res[0].stock_quantity < quantity) {
                              return console.log("We do not have the stock to fulfill that order");
                          } else {
                             //  console.log("remove from stock here!");
                             //  console.log(res);
 
-                             var newQuantity = res[0].stock_quantity - parseInt(quantity);
+                             var newQuantity = res[0].stock_quantity - quantity;
                              connection.query("UPDATE products SET ? WHERE ?",
                              [
                                 {
@@ -101,6 +102,7 @@ function buyItem(id, quantity) {
                              (err, result) => {
                                  if (err) throw error;
                                  console.log("Updated stock");
+                                 console.log("$" + (quantity * res[0].price) + " spent on purchase.");
                              })
                          }
                          

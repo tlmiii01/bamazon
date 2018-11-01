@@ -1,6 +1,7 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-const { table } = require("table");
+// const { table } = require("table");
+var printTable = require("./helper");
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -14,8 +15,8 @@ connection.connect((err) => {
     if (err) throw err;
     console.log("Connected as id: " + connection.threadId);
 
-    // displayAllItems();
-    promptCustomer();
+    displayAllItems();
+    // promptCustomer();
 
 })
 
@@ -36,22 +37,22 @@ function displayAllItems() {
 
 // mysql returns an array of objects.  Need to have an array of arrays 
 // for the tables npm to work correctly.
-function printTable(results) {
-    // Convert the array of objectd into an array of arrays.
-    var data = [];
+// function printTable(results) {
+//     // Convert the array of objectd into an array of arrays.
+//     var data = [];
 
-    if (results.length > 0) {
-        // console.log(results[0]);
-        data.push(Object.keys(results[0]));
-        for (var item of results) {
-            data.push(Object.values(item));
-        }
+//     if (results.length > 0) {
+//         // console.log(results[0]);
+//         data.push(Object.keys(results[0]));
+//         for (var item of results) {
+//             data.push(Object.values(item));
+//         }
 
-        // console.log(data);
-        var output = table(data);
-        console.log(output);
-    }
-}
+//         // console.log(data);
+//         var output = table(data);
+//         console.log(output);
+//     }
+// }
 
 function promptCustomer() {
     inquirer
@@ -79,8 +80,8 @@ function buyItem(id, quantity) {
                      (err, res) => {
                          if (err) throw err;
                          
-                         // If result is empty, item does not exist.
                          quantity = parseInt(quantity);
+                         // If result is empty, item does not exist.
                          if (res.length === 0) {
                              return console.log("Item does not exist!");
                          } else if (res[0].stock_quantity < quantity) {

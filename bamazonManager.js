@@ -44,7 +44,7 @@ function promptManager() {
                     viewAllProducts();
                     break;
                 case "View Low Quantity Products":
-                    console.log("Not implemented yet...");
+                    viewLowInventory();
                     break;
                 case "Add Inventory":
                     console.log("Not implemented yet...");
@@ -58,7 +58,7 @@ function promptManager() {
 
 // View Products for Sale
 function viewAllProducts() {
-    console.log("Got here");
+    // console.log("Got here");
     var query = "SELECT * FROM products";
     connection.query(query, (err, data) => {
         if (err) throw err;
@@ -67,6 +67,14 @@ function viewAllProducts() {
 };
 
 
-// View Low Inventory
+// View Low Inventory (less than five itesms)
+function viewLowInventory() {
+    var query = "SELECT * FROM products WHERE stock_quantity < 6";
+    connection.query(query, (err, data) => {
+        if (err) throw err;
+        printTable(data);
+    });
+};
+
 // Add to Inventory
 // Add New Product

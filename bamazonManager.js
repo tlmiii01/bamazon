@@ -50,7 +50,7 @@ function promptManager() {
                     addInventory();
                     break;
                 case "Add New Item":
-                    console.log("Not implemented yet...");
+                    addNewProduct();
                     break;
             }
         })
@@ -121,4 +121,45 @@ function addInventory() {
             })
         })
 }
+
 // Add New Product
+function addNewProduct() {
+    inquirer
+        .prompt([
+            {
+                name: "itemName",
+                type: "input",
+                message: "Product name: "
+            },
+            {
+                name: "itemPrice",
+                type: "input",
+                message: "Product price: "
+            },
+            {
+                name: "itemDepartment",
+                type: "input",
+                message: "Department: "
+            },
+            {
+                name: "itemQuantity",
+                type: "input",
+                message: "Product quantity: "
+            }
+        ])
+        .then((answers) => {
+            var query = "INSERT INTO products SET ?";
+            connection.query(query,
+                {
+                    product_name: answers.itemName,
+                    department_name: answers.itemDepartment,
+                    price: parseFloat(answers.itemPrice),
+                    stock_quantity: parseInt(answers.itemQuantity)
+                },
+                (err, data) => {
+                    if (err) throw err;
+                    console.log("Product added...");
+                    viewAllProducts();
+                })
+        })
+}

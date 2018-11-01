@@ -47,7 +47,7 @@ function promptManager() {
                     viewLowInventory();
                     break;
                 case "Add Inventory":
-                    console.log("Not implemented yet...");
+                    addInventory();
                     break;
                 case "Add New Item":
                     console.log("Not implemented yet...");
@@ -66,7 +66,6 @@ function viewAllProducts() {
     });
 };
 
-
 // View Low Inventory (less than five itesms)
 function viewLowInventory() {
     var query = "SELECT * FROM products WHERE stock_quantity < 6";
@@ -77,4 +76,49 @@ function viewLowInventory() {
 };
 
 // Add to Inventory
+function addInventory() {
+    // Use inquirer to get the id and amount to add.
+    inquirer
+        .prompt([
+            {
+                name: "id",
+                type: "input",
+                message: "ID number you would like to modify: "
+            },
+            {
+                name: "quantity",
+                type: "input",
+                message: "Number of items to add (Negative number to remove): "
+            }
+        ])
+        .then( ( answers ) => {
+            let itemID = parseInt(answers.id);
+            let itemQuantity = parseInt(answers.quantity);
+
+            // Check if the item exists
+            var query = "SELECT * FROM products WHERE item_id = ?";
+            connection.query(query, [itemID], (err, data) => {
+                if (data.length === 0) {
+                    return console.log("Item does not exist...");
+                } else {
+                    itemQuantity += data[0].stock_quantity;
+                    query = "UPDATE products SET ? WHERE ?";
+                    connection.query( query,
+                    [
+                        {
+                            stock_quantity: itemQuantity
+                        },
+                        {
+                            item_id: itemID
+                        }
+                    ],
+                    (err, data2) => {
+                        if (err) throw err;
+                        console.log("Quantity updated!");
+                        viewAllProducts();
+                    })
+                }
+            })
+        })
+}
 // Add New Product
